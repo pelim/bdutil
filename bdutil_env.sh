@@ -43,6 +43,11 @@ GCE_ZONE=""
 # cluster setup and configuration.
 GCE_NETWORK='default'
 
+# Tags that should be attached to new instances.
+# The format of this string is TAG,[TAG,…] and is
+# passed to gcloud compute instances create --tags.
+GCE_TAGS=''
+
 # If non-empty, specifies the machine type for the master node separately from
 # worker nodes. If empty, defaults to using the same machine type as workers
 # specified in GCE_MACHINE_TYPE.

@@ -819,6 +819,10 @@ function create_cluster() {
       if (( ${i} < NUM_PREEMPTIBLE )); then
         optional_preemptible_arg="--preemptible"
       fi
+      local optional_tags_arg=""
+      if [[ -n "${GCE_TAGS}" ]]; then
+        optional_tags_arg"--tags ${GCE_TAGS}"
+      fi
 
       run_gcloud_compute_cmd \
           instances create \
@@ -829,7 +833,8 @@ function create_cluster() {
           --network=${GCE_NETWORK} \
           --scopes ${GCE_SERVICE_ACCOUNT_SCOPES[@]//,/ } \
           --boot-disk-type=pd-standard \
-          ${optional_disk_arg} &
+          ${optional_disk_arg} \
+          ${optional_tags_arg} &
       sleep_for_api_ops
     done
   fi
@@ -847,6 +852,10 @@ function create_cluster() {
         optional_disk_arg+='--local-ssd interface=SCSI '
       done
     fi
+    local optional_tags_arg=""
+    if [[ -n "${GCE_TAGS}" ]]; then
+      optional_tags_arg"--tags ${GCE_TAGS}"
+    fi
     run_gcloud_compute_cmd \
         instances create \
         ${MASTER_HOSTNAME} \
@@ -855,7 +864,8 @@ function create_cluster() {
         --network=${GCE_NETWORK} \
         --scopes ${GCE_SERVICE_ACCOUNT_SCOPES[@]//,/ } \
         --boot-disk-type=pd-standard \
-        ${optional_disk_arg} &
+        ${optional_disk_arg} \
+        ${optional_tags_arg} &
   else
     loginfo 'Skipping master creation because SKIP_MASTER is true.'
   fi
